@@ -1,6 +1,6 @@
 package com.alfa.work5;
 
-public class Triangle extends Shape{
+public class Triangle extends Shape {
     private int a;
     private int b;
     private int c;
@@ -32,7 +32,7 @@ public class Triangle extends Shape{
     @Override
     public double calcArea() {
         int p = (a + b + c) / 2;
-        return Math.sqrt(p*(p-a)*(p-b)*(p-c));
+        return Math.sqrt(p * (p - a) * (p - b) * (p - c));
     }
 
     @Override
@@ -41,4 +41,15 @@ public class Triangle extends Shape{
     }
 
 
+    public static Triangle parseTriangle(String params) {
+        String[] shapeParams = params.split(":");
+        String[] shapeDimensions = shapeParams[2].split(",");
+        try {
+            return new Triangle(shapeParams[1], Integer.parseInt(shapeDimensions[0]),
+                    Integer.parseInt(shapeDimensions[1]), Integer.parseInt(shapeDimensions[2]));
+        } catch (NumberFormatException e) {
+            System.out.println("Неверный формат данных размера треугольника " + params);
+            return null;
+        }
+    }
 }

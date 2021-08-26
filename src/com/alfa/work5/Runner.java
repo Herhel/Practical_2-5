@@ -6,42 +6,56 @@ import java.util.Scanner;
 public class Runner {
 
     public void run() {
-//        Shape[] collection = new Shape[10];
-//        enterShape(collection);
-        Shape[] collection = createShapes();
-        collection = enterShape(collection);
+        Shape[] collection = enterShapeCollection();
         printShapes(collection);
     }
 
-    private Shape[] createShapes() {
-        return new Shape[]{Shape.parseShape("Rectangle:RED:10,20"),
-                Shape.parseShape("Circle:BLACK:10"),
-                Shape.parseShape("Triangle:GREEN:9,7,12")};
-    }
-
-    private Shape[] enterShape(Shape[] collection) {
-        System.out.println("Введите фигуру в формате Shape:color:dimension1,...,dimensionN");
+    private Shape[] enterShapeCollection() {
+        Shape[] collection;
+        System.out.println("Введите размер коллекции:");
         Scanner sc = new Scanner(System.in);
-        collection = addShape(collection, sc.next());
+        int arraySize;
+        while (true) {
+            if (sc.hasNextInt()) {
+                arraySize = sc.nextInt();
+                if (arraySize > 0) {
+                    collection = new Shape[arraySize];
+                    break;
+                }
+            }
+            System.out.println("Вы ввели значение не подходящее для размера коллекции! Введите целое число больше чем 0");
+            sc.nextLine();
+        }
+        for (int i = 0; i < collection.length; i++) {
+            while (true) {
+                System.out.println("Введите фигуру в формате Shape:color:dimension1,...,dimensionN");
+                Shape temp = Shape.parseShape(sc.next());
+                if (temp != null) {
+                    addShape(collection, temp);
+                    System.out.println("Фигура добавлена в коллекцию");
+                    break;
+                }
+            }
+        }
         return collection;
     }
 
-    private Shape[] addShape(Shape[] collection, String params) {
+//    private Shape[] createShapes() {
+//        return new Shape[]{Shape.parseShape("Rectangle:RED:10,20"),
+//                Shape.parseShape("Circle:BLACK:10"),
+//                Shape.parseShape("Triangle:GREEN:9,7,12")};
+//    }
+
+    private Shape[] addShape(Shape[] collection, Shape shape) {
         for (int i = 0; i < collection.length; i++) {
             if (collection[i] == null) {
-                Shape temp = Shape.parseShape(params);
-                if (temp != null) {
-                    collection[i] = temp;
-                }
+                collection[i] = shape;
                 return collection;
             }
         }
         int index = collection.length;
         collection = Arrays.copyOf(collection, (int) (collection.length * 1.5));
-        Shape temp = Shape.parseShape(params);
-        if (temp != null) {
-            collection[index] = temp;
-        }
+        collection[index] = shape;
         return collection;
     }
 
@@ -54,7 +68,7 @@ public class Runner {
                 }
             }
         } else {
-            System.out.println("Нет элементов для вывода");
+            System.out.println("\nНет элементов для вывода");
         }
     }
 }

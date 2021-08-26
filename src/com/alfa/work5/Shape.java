@@ -37,20 +37,20 @@ public abstract class Shape implements Drawable, Comparable, Cloneable {
 
     public static Shape parseShape (String params) {
         String[] shapeParams = params.split(":");
-        if (shapeParams[0].equalsIgnoreCase("Circle")){
-            return new Circle(shapeParams[1], Integer.parseInt(shapeParams[2]));
+        if (shapeParams.length == 3) {
+            if (shapeParams[0].equalsIgnoreCase("Circle")) {
+                return Circle.parseCircle(params);
+            }
+            if (shapeParams[0].equalsIgnoreCase("Rectangle")) {
+                return Rectangle.parseRectangle(params);
+            }
+            if (shapeParams[0].equalsIgnoreCase("Triangle")) {
+                return Triangle.parseTriangle(params);
+            }
+            System.out.println("Не найдена фигура данного типа");
+        } else {
+            System.out.println("Введены не все данные или формат ввода неверный для фигуры " + params + "." +"\nДанные должны быть в формате Shape:color:dimension1,...,dimensionN");
         }
-        if (shapeParams[0].equalsIgnoreCase("Rectangle")){
-            String[] shapeDimensions = shapeParams[2].split(",");
-            return new Rectangle(shapeParams[1], Integer.parseInt(shapeDimensions[0]),
-                    Integer.parseInt(shapeDimensions[1]));
-        }
-        if (shapeParams[0].equalsIgnoreCase("Triangle")){
-            String[] shapeDimensions = shapeParams[2].split(",");
-            return new Triangle(shapeParams[1], Integer.parseInt(shapeDimensions[0]),
-                    Integer.parseInt(shapeDimensions[1]), Integer.parseInt(shapeDimensions[2]));
-        }
-        System.out.println("Не найдена фигура данного типа");
         return null;
     }
 }
