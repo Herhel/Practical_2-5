@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class TrainSchedule {
-    private static int trainsCount = 0;
+    private int trainsCount = 0;
     private Train[] trains;
 
     public TrainSchedule(int trainsCount) {
@@ -15,7 +15,7 @@ public class TrainSchedule {
     }
 
     public Train[] getTrains() {
-        return trains;
+        return Arrays.copyOf(trains, trainsCount);
     }
 
     public void addTrain() {
@@ -24,42 +24,64 @@ public class TrainSchedule {
         String stationArrival;
         String timeDispatch;
         String timeArrival;
-        DaysOfWeek[] days = new DaysOfWeek[DaysOfWeek.values().length];
-        if (trains.length <= trainsCount) {
-            Train[] newTrains = new Train[trains.length + 5];
-            System.arraycopy(trains, 0, newTrains, 0, trains.length);
-            trains = newTrains;
-        }
+
         Scanner sc = new Scanner(System.in);
-        while (true) {
-            System.out.println("Введите номер поезда:");
-            if (sc.hasNextInt()) {
-                number = sc.nextInt();
-                break;
-            } else {
-                System.out.println("\nВы ввели не числовое значение! Повторите ввод.");
-                sc.nextLine();
-            }
-        }
-        sc = new Scanner(System.in);
+//        while (true) {
+//            System.out.println("Введите номер поезда:");
+//            if (sc.hasNextInt()) {
+//                number = sc.nextInt();
+//                break;
+//            } else {
+//                System.out.println("\nВы ввели не числовое значение! Повторите ввод.");
+//                sc.nextLine();
+//            }
+//        }
+        number = enterTrainNumber(sc);
+        //sc = new Scanner(System.in);
         System.out.println("Введите станцию отправления:");
-        stationDispatch = sc.nextLine();
+        stationDispatch = sc.next();
         System.out.println("Введите время отправления в формате HH:MM :");
-        timeDispatch = sc.nextLine();
+        timeDispatch = sc.next();
         System.out.println("Введите станцию прибытия:");
-        stationArrival = sc.nextLine();
+        stationArrival = sc.next();
         System.out.println("Введите время прибытия в формате HH:MM :");
-        timeArrival = sc.nextLine();
-        System.out.println("Вводите дени движения поезда через Enter, или введите all для выбора всех дней недели, или x для завершения ввода:");
-        String input = sc.nextLine();
+        timeArrival = sc.next();
+        DaysOfWeek[] days = enterTrainDays(sc);
+//        System.out.println("Вводите дни движения поезда через Enter, или введите all для выбора всех дней недели, или x для завершения ввода:");
+//        String input = sc.next();
+//        DaysOfWeek[] days = new DaysOfWeek[DaysOfWeek.values().length];
+//        if (input.equalsIgnoreCase("all")) {
+//            days = DaysOfWeek.values();
+//        } else {
+//            int index = 0;
+//            while (true) {
+//                if (input.equalsIgnoreCase("x")) {
+//                    days = Arrays.copyOf(days, index);
+//                    break;
+//                }
+//                try {
+//                    days[index] = DaysOfWeek.valueOf(input.toUpperCase());
+//                    index++;
+//                } catch (IllegalArgumentException e) {
+//                    System.out.println("Введено некорректное название дня, повторите ввод:");
+//                }
+//                input = sc.next();
+//            }
+//        }
+        addTrain(number, stationDispatch, stationArrival, timeDispatch, timeArrival, days);
+    }
+
+    private DaysOfWeek[] enterTrainDays(Scanner sc) {
+        System.out.println("Вводите дни движения поезда через Enter, или введите all для выбора всех дней недели, или x для завершения ввода:");
+        String input = sc.next();
+        DaysOfWeek[] days = new DaysOfWeek[DaysOfWeek.values().length];
         if (input.equalsIgnoreCase("all")) {
-            days = DaysOfWeek.values();
+            return DaysOfWeek.values();
         } else {
             int index = 0;
             while (true) {
                 if (input.equalsIgnoreCase("x")) {
-                    days = Arrays.copyOf(days, index);
-                    break;
+                    return Arrays.copyOf(days, index);
                 }
                 try {
                     days[index] = DaysOfWeek.valueOf(input.toUpperCase());
@@ -67,15 +89,32 @@ public class TrainSchedule {
                 } catch (IllegalArgumentException e) {
                     System.out.println("Введено некорректное название дня, повторите ввод:");
                 }
-                input = sc.nextLine();
+                input = sc.next();
             }
         }
-        addTrain(number, stationDispatch, stationArrival, timeDispatch, timeArrival, days);
+    }
+
+    private int enterTrainNumber(Scanner sc) {
+        while (true) {
+            System.out.println("Введите номер поезда:");
+            if (sc.hasNextInt()) {
+                return sc.nextInt();
+            } else {
+                System.out.println("\nВы ввели не числовое значение! Повторите ввод.");
+                sc.nextLine();
+            }
+        }
     }
 
     public void addTrain(int number, String stationDispatch, String stationArrival, String timeDispatch, String timeArrival, DaysOfWeek[] days) {
+        if (trains.length == trainsCount) {
+//            Train[] newTrains = new Train[trains.length + 5];
+//            System.arraycopy(trains, 0, newTrains, 0, trains.length);
+//            trains = newTrains;
+            trains = Arrays.copyOf(trains, trains.length + 5);
+        }
         trains[trainsCount] = new Train(number, stationDispatch, stationArrival, timeDispatch, timeArrival, days);
-        TrainSchedule.trainsCount++;
+        trainsCount++;
     }
 
     public void printSchedule() {
@@ -89,10 +128,9 @@ public class TrainSchedule {
         }
     }
 
-    public Train[] searchTrainByArrivalAndDay(String arrival, String day) {
-        int length = trains.length;
-        Train[] searchResult = new Train[length];
-        for (int i = 0; i < length; i++) {
+    public Train[] searchTrainByArrivalAndDay(String arrival, DaysOfWeek day) {
+        Train[] searchResult = new Train[trainsCount];
+        for (int i = 0; i < searchResult.length; i++) {
             if (trains[i].getStationArrival().equalsIgnoreCase(arrival) && trains[i].inDay(day)) {
                 searchResult[i] = trains[i];
             }
@@ -100,21 +138,6 @@ public class TrainSchedule {
         return Arrays.stream(searchResult).filter(Objects::nonNull).toArray(Train[]::new);
     }
 
-    public void searchTrain() {
-        String arrival;
-        String day;
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Введите станцию прибытия:");
-        arrival = sc.nextLine();
-        System.out.println("Введите день недели:");
-        day = sc.nextLine();
-        Train[] searchResult = searchTrainByArrivalAndDay(arrival, day);
-        if (searchResult.length > 0) {
-            System.out.println("Поезда, идущие до станции " + arrival + " в " + day);
-            printTrains(searchResult);
-        } else {
-            System.out.println("Нет поездов, идущих до станции " + arrival + " в " + day);
-        }
-    }
+
 
 }

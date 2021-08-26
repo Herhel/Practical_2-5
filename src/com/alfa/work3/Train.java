@@ -2,6 +2,8 @@ package com.alfa.work3;
 
 import com.alfa.work1.DaysOfWeek;
 
+import java.util.Arrays;
+
 public class Train {
     private int number;
     private String stationDispatch;
@@ -10,7 +12,8 @@ public class Train {
     private String timeArrival;
     private DaysOfWeek[] days;
 
-    public Train(int number, String stationDispatch, String stationArrival, String timeDispatch, String timeArrival, DaysOfWeek[] days) {
+    public Train(int number, String stationDispatch, String stationArrival, String timeDispatch,
+                 String timeArrival, DaysOfWeek[] days) {
         this.number = number;
         this.stationDispatch = stationDispatch;
         this.stationArrival = stationArrival;
@@ -69,23 +72,27 @@ public class Train {
 
     @Override
     public String toString() {
-        StringBuilder info = new StringBuilder("Train number " + number + " dispatch from " + stationDispatch + " at " + timeDispatch + " arrival to " + stationArrival + " at " + timeArrival + " leaves on the following day(s): ");
-        int i = 0;
-        int length = days.length - 1;
-        for (DaysOfWeek day : days) {
-            if (i < length) {
-                info.append(day.toString()).append(", ");
-                i++;
-            } else {
-                info.append(day.toString());
-            }
-        }
+        StringBuilder info = new StringBuilder("Train number " + number + " dispatch from "
+                + stationDispatch + " at " + timeDispatch + " arrival to " + stationArrival
+                + " at " + timeArrival + " leaves on the following day(s): "
+                + Arrays.toString(days));
+
+//        int i = 0;
+//        int length = days.length - 1;
+//        for (DaysOfWeek day : days) {
+//            if (i < length) {
+//                info.append(day.toString()).append(", ");
+//                i++;
+//            } else {
+//                info.append(day.toString());
+//            }
+//        }
         return info.toString();
     }
 
-    public boolean inDay(String day) {
+    public boolean inDay(DaysOfWeek day) {
         for (DaysOfWeek d : days) {
-            if (d.toString().equalsIgnoreCase(day)) return true;
+            if (d == day) return true;
         }
         return false;
     }
