@@ -1,6 +1,6 @@
 package com.alfa;
 
-import com.alfa.work4.Runner;
+import com.alfa.work5.Runner;
 
 public class Task25 {
 
